@@ -1,3 +1,7 @@
+// Code by Robin DrZobin Larsson
+// robin.larsson@protonmail.ch
+// 2022-11-02
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
