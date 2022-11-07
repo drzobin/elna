@@ -1,8 +1,7 @@
-// Code by Robin Larsson
-// rl22ct@student.lnu.se
+// Code by Robin Larsson aka drzobin
 // robin.larsson@protonmail.ch
-// 2019-11-27
 
 int main() {
+
 	return 0;
 }
