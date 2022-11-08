@@ -4,8 +4,24 @@
 
 #include "stdlib.h"
 #include "stdio.h"
+#include "sys/stat.h"
 
 #include "shared_funcs.h"
+
+/*
+Get the size of a file.
+@return The filesize, or 0 if the file does not exist.
+*/
+size_t get_filesize(const char* filename) {
+    struct stat st;
+
+    if(stat(filename, &st) != 0) {
+        return 0;
+    }
+
+    return st.st_size;   
+}
+
 
 /*
 Reade a file on disc and puts the content on heap.
