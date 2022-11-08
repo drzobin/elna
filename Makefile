@@ -1,5 +1,5 @@
 CC=clang
-CFLAG=-g
+CFLAG=-g -Wall -ansi -pedantic
 
 all: test_binary
 
