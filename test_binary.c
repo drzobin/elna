@@ -21,7 +21,7 @@ void vuln_func(int size){
 int main(int argc, char *argv[]) {
 
 	// Name of the file to read.
-	char file[] = argv[1];
+	char *file = argv[1];
 
 	// Data in the file to read.
 	char *file_data;
