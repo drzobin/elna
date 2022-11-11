@@ -5,17 +5,22 @@
 #include "shared_funcs.h"
 #include <stddef.h>
 #include <stdio.h>
-
+#include <string.h>
+#include <stdlib.h>
 /*
-Copy 0 to a int array, this function has a stack based overflow vulnerabilitie.  
+Copy 512 A from heap to char dst[0] on stack, this function has a stack based overflow vulnerabilitie.  
 @return void
 */
-void vuln_func(int size){
-	int buf[0];
+void vuln_func(){
 	
-	for(int i = 0; i < size; i = i +1){
-		buf[i] = 0;
-	}
+	char *src;
+	char dst[0];
+	src = (char *) malloc(512);
+	
+	memset(src,65,512);	
+	memcpy(dst,src,strlen(src));
+
+	printf("dst: %s \n",dst);
 }
 
 int main(int argc, char *argv[]) {
@@ -36,10 +41,12 @@ int main(int argc, char *argv[]) {
 	int offset = 1;
 	
 	// Print offset value. 
-	printf("offset: %d hex: %hhx\n",offset,file_data[offset]);
+	printf("offset: %d,data as hex: %hhx, data as int: %d\n",offset,file_data[offset],file_data[offset]);
 	
 	// This function has a stack based overflow vulnerabilitie.
-	vuln_func(file_data[offset]);
+	if(file_data[offset] == 65){
+		vuln_func();
+	}
 	
 	return 0;
 }
