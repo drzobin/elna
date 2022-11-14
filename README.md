@@ -1,2 +1,2 @@
 # elna
-A bitflipping fuzzer for programs that parse files as input.
+Bit flipping fuzzer for programs that parse files as input.
