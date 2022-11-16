@@ -144,7 +144,7 @@ int main(int argc, char *argv[]){
     char cmd[] = "/home/drz/github/elna/test_binary";
 
     // Arguments to command to fuzz.
-    char *cmd_argv[2];
+    char *cmd_argv[3];
     cmd_argv[0] = "test_binary";
     cmd_argv[1] = "/home/drz/github/elna/working_dir/test.txt";
     cmd_argv[2] = NULL;
