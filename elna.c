@@ -37,9 +37,17 @@ int runcmd(char *cmd,char *argv[], int runTime)
     child_pid = fork();
     if(child_pid == 0) {
         // This is done by the child process.
-        execvp(cmd,argv);
+        int exit_code;
+        
+        //printf("cmd: %s\n",cmd);
+        //printf("argv[0]: %s\n",argv[0]);
+        //printf("argv[1]: %s\n",argv[1]);
+        exit_code = execvp(cmd,argv);
         // If execvp returns, it must have failed.
-        exit(0);
+        //exit(0);
+        printf("execvp exit_code:%d\n",exit_code);
+        // This is done by the child process.
+        exit(exit_code);
     }
     else {
         // This is run by the parent.
@@ -78,7 +86,7 @@ char *readFile(char *file,size_t size){
     if((ptr_fp = fopen(file, "rb"))==NULL)
     {
         printf("Unable to open the file!\n");
-	exit(1);
+        exit(1);
     }
     else 
     {
@@ -89,7 +97,7 @@ char *readFile(char *file,size_t size){
     if(fread(ptr_file, size, 1, ptr_fp) != 1)
     {
         printf( "Read error!\n" );
-	exit( 1 );
+        exit( 1 );
     }
     else 
     {
@@ -113,9 +121,6 @@ void createSeedFile(char *originalFile,size_t size,int pos,char *value,char *new
     // Ptr to file
     FILE *ptr_fp;
 
-    // Filename of fuzz file
-    char fileName[] = "/input";
-
     // Open file for writing
     ptr_fp = fopen(newFile,"a");
 
@@ -127,37 +132,38 @@ void createSeedFile(char *originalFile,size_t size,int pos,char *value,char *new
             continue;
         }
         fwrite(originalFile+i,1,1,ptr_fp); 
-    }    
+    }
+    fclose(ptr_fp);    
 
     //printf("hex: %X\n",originalFile[0]);
 }
 
-int main(){
+int main(int argc, char *argv[]){
     // Full path to command to fuzzed.
     //char cmd[] = "/usr/bin/vlc";
-    char cmd[] = "/bin/ls";
+    char cmd[] = "/home/drz/github/elna/test_binary";
 
     // Arguments to command to fuzz.
-    char *argv[3];
-    argv[0] = "ls";
-    argv[1] = "/lhhl";
-    argv[2] = NULL;
+    char *cmd_argv[2];
+    cmd_argv[0] = "test_binary";
+    cmd_argv[1] = "/home/drz/github/elna/working_dir/test.txt";
+    cmd_argv[2] = NULL;
 
     // Full path to original seed file.
-    char file[] = "/home/drz/Dropbox/projects/elna/not_kitty.tiff";
+    char file[] = "/home/drz/github/elna/test.txt";
 
     // Full path to tmp fuzzy file.
-    char tmpFile[] = "/home/drz/Dropbox/projects/elna/tmp/in.dat";
+    char tmpFile[] = "/home/drz/github/elna/working_dir/test.txt";
 
     // Full path where to save files that crash the program.
-    char outDir[] = "/home/drz/Dropbox/projects/elna/out/";
+    char outDir[] = "/home/drz/github/elna/results/";
 
     // Ptr to original file on heap.
     char *originalFileData;
 
     // Byte possision to fuzz.
-    int pos = 2;
-
+    int pos = 1;
+    
     // File size of original seed file.
     size_t fileSize = getFilesize(file);
     printf("File size is: %zu\n",fileSize);
@@ -171,6 +177,7 @@ int main(){
 
     // Start fuzzing.
     for(int i=0; i<255; i++){
+        printf("\n\n");
         value++;
         printf("Value: %hhx\n",value);
 
@@ -178,7 +185,7 @@ int main(){
         createSeedFile(originalFileData,fileSize,pos,v_ptr,tmpFile);
 
         // Run executable with newly created input.
-        int status = runcmd(cmd,argv,1);
+        int status = runcmd(cmd,cmd_argv,1);
 
         // Executable did not crash, remove input file.
         if(status == 0) {
@@ -186,9 +193,11 @@ int main(){
             if(remove_status != 0) {
                 printf("Error removing tmp file\n");
             }
+            printf("Exit code 0\n");
         }
         // Executable probably crashed, save input file. 
         else {
+            printf("Exit code:%d\n",status);
             time_t T= time(NULL);
             struct  tm tm = *localtime(&T);
 
