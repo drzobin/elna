@@ -15,7 +15,7 @@
 Get the size of a file.
 @return The filesize, or 0 if the file does not exist.
 */
-size_t getFilesize(const char* filename) {
+size_t get_filesize(const char* filename) {
     struct stat st;
 
     if(stat(filename, &st) != 0) {
@@ -29,7 +29,7 @@ size_t getFilesize(const char* filename) {
 Run a command, kill the process if it hasent exit after sleep time.
 @return Exit value of the command. 
 */
-int runcmd(char *cmd,char *argv[], int runTime)
+int run_cmd(char *cmd,char *argv[], int runTime)
 {
     int child_pid;
     int child_status;
@@ -70,7 +70,7 @@ int runcmd(char *cmd,char *argv[], int runTime)
 Reade a file on disc and puts the content on heap.
 @return Char pointer to content on heap.
 */
-char *readFile(char *file,size_t size){
+char *read_file(char *file,size_t size){
     // Ptr to file on heap
     char *ptr_file;
 
@@ -117,7 +117,7 @@ char *readFile(char *file,size_t size){
 Create a file on disc.
 @return void.
 */
-void createSeedFile(char *originalFile,size_t size,int pos,char *value,char *newFile){
+void create_seedfile(char *originalFile,size_t size,int pos,char *value,char *newFile){
     // Ptr to file
     FILE *ptr_fp;
 
@@ -153,23 +153,23 @@ int main(int argc, char *argv[]){
     char file[] = "/home/drz/github/elna/test.txt";
 
     // Full path to tmp fuzzy file.
-    char tmpFile[] = "/home/drz/github/elna/working_dir/test.txt";
+    char tmp_file[] = "/home/drz/github/elna/working_dir/test.txt";
 
     // Full path where to save files that crash the program.
-    char outDir[] = "/home/drz/github/elna/results/";
+    char out_dir[] = "/home/drz/github/elna/results/";
 
     // Ptr to original file on heap.
-    char *originalFileData;
+    char *original_filedata;
 
     // Byte possision to fuzz.
     int pos = 1;
     
     // File size of original seed file.
-    size_t fileSize = getFilesize(file);
-    printf("File size is: %zu\n",fileSize);
+    size_t file_size = get_filesize(file);
+    printf("File size is: %zu\n",file_size);
 
     // Read original file data to heap.
-    originalFileData = readFile(file,fileSize);
+    original_filedata = read_file(file,file_size);
 
     // Start with this hex value.
     char value = 0x00;
@@ -182,14 +182,14 @@ int main(int argc, char *argv[]){
         printf("Value: %hhx\n",value);
 
         // Create file to use as input.
-        createSeedFile(originalFileData,fileSize,pos,v_ptr,tmpFile);
+        create_seedfile(original_filedata,file_size,pos,v_ptr,tmp_file);
 
         // Run executable with newly created input.
-        int status = runcmd(cmd,cmd_argv,1);
+        int status = run_cmd(cmd,cmd_argv,1);
 
         // Executable did not crash, remove input file.
         if(status == 0) {
-            int remove_status = remove(tmpFile);
+            int remove_status = remove(tmp_file);
             if(remove_status != 0) {
                 printf("Error removing tmp file\n");
             }
@@ -219,21 +219,21 @@ int main(int argc, char *argv[]){
             char sec[2];
             sprintf(sec,"%d",tm.tm_sec);
 
-            char newFileName[sizeof(year)+sizeof(month)+sizeof(day)+sizeof(hour)+sizeof(min)+sizeof(sec)];
-            strcpy(newFileName,year);
-            strcat(newFileName,month);
-            strcat(newFileName,day);
-            strcat(newFileName,hour);
-            strcat(newFileName,min);
-            strcat(newFileName,sec);
+            char new_filename[sizeof(year)+sizeof(month)+sizeof(day)+sizeof(hour)+sizeof(min)+sizeof(sec)];
+            strcpy(new_filename,year);
+            strcat(new_filename,month);
+            strcat(new_filename,day);
+            strcat(new_filename,hour);
+            strcat(new_filename,min);
+            strcat(new_filename,sec);
 
-            char outFile[sizeof(outDir) + sizeof(newFileName)];
-            strcpy(outFile,outDir);
-            strcat(outFile,newFileName);
+            char out_file[sizeof(out_dir) + sizeof(new_filename)];
+            strcpy(out_file,out_dir);
+            strcat(out_file,new_filename);
 
-            int rename_status = rename(tmpFile,outFile);
-            printf("tmpFile: %s\n",tmpFile);
-            printf("outFile: %s\n",outFile);
+            int rename_status = rename(tmp_file,out_file);
+            printf("tmpFile: %s\n",tmp_file);
+            printf("outFile: %s\n",out_file);
             if(rename_status != 0) {
                 printf("Error moving tmp file, exiting\n");
                 return 1;
