@@ -29,14 +29,14 @@ size_t get_filesize(const char* filename) {
 Run a command, kill the process if it hasent exit after sleep time.
 @return Exit value of the command. 
 */
-int run_cmd(char *cmd,char *argv[], int runTime)
+int run_cmd(char *cmd,char *argv[], int run_time)
 {
     int child_pid;
     int child_status;
 
     child_pid = fork();
     if(child_pid == 0) {
-        // This is done by the child process.
+        // This is run by the child process.
         int exit_code;
         
         //printf("cmd: %s\n",cmd);
@@ -51,17 +51,17 @@ int run_cmd(char *cmd,char *argv[], int runTime)
     }
     else {
         // This is run by the parent.
-        sleep(runTime);
-        if(waitpid(-1,&child_status,WNOHANG) == child_pid){
-            if(child_status != 0){
+        if(run_time == -1){
+            waitpid(-1, &child_status, 0);
+            return child_status;
+        } else {
+            sleep(run_time);
+            if(waitpid(-1,&child_status,WNOHANG) == child_pid){
                 return child_status;
-            } 
-            else {
+            } else {
+                kill(child_pid,SIGKILL);
                 return 0;
             }
-        } else {
-            kill(child_pid,SIGKILL);
-            return 0;
         }
     }
 }
@@ -164,6 +164,9 @@ int main(int argc, char *argv[]){
     // Byte possision to fuzz.
     int pos = 1;
     
+    // Number of seconds to wait for fuzzed program before killing it. If set to -1 we will wait until it has exit.
+    int wait_pid = -1;
+    
     // File size of original seed file.
     size_t file_size = get_filesize(file);
     printf("File size is: %zu\n",file_size);
@@ -185,7 +188,7 @@ int main(int argc, char *argv[]){
         create_seedfile(original_filedata,file_size,pos,v_ptr,tmp_file);
 
         // Run executable with newly created input.
-        int status = run_cmd(cmd,cmd_argv,1);
+        int status = run_cmd(cmd,cmd_argv,wait_pid);
 
         // Executable did not crash, remove input file.
         if(status == 0) {
