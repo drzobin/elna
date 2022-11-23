@@ -80,7 +80,6 @@ void create_seedfile(char *originalFile,size_t size,int pos,char *value,char *ne
 
 int main(int argc, char *argv[]){
     // Full path to command to fuzzed.
-    //char cmd[] = "/usr/bin/vlc";
     char cmd[] = "/home/drz/github/elna/test_binary";
 
     // Arguments to command to fuzz.
@@ -101,11 +100,14 @@ int main(int argc, char *argv[]){
     // Ptr to original file on heap.
     char *original_filedata;
 
-    // Byte possision to fuzz.
-    int pos = 1;
+    // Byte offset/possition in input file to fuzz, if set to -1 then flipp all bits in input file.
+    int pos = -1;
     
     // Number of seconds to wait for fuzzed program before killing it. If set to -1 we will wait until it has exit.
     int wait_pid = -1;
+    
+    // If this is set to 1, all bits in input file will be flipped.
+    int flipp_all_bits = 0;
     
     // File size of original seed file.
     size_t file_size = get_filesize(file);
@@ -119,70 +121,87 @@ int main(int argc, char *argv[]){
     char *v_ptr = &value;
 
     // Start fuzzing.
-    for(int i=0; i<255; i++){
-        printf("\n\n");
-        value++;
-        printf("Value: %hhx\n",value);
-
-        // Create file to use as input.
-        create_seedfile(original_filedata,file_size,pos,v_ptr,tmp_file);
-
-        // Run executable with newly created input.
-        int status = run_cmd(cmd,cmd_argv,wait_pid);
-
-        // Executable did not crash, remove input file.
-        if(status == 0) {
-            int remove_status = remove(tmp_file);
-            if(remove_status != 0) {
-                printf("Error removing tmp file\n");
-            }
-            printf("Exit code 0\n");
+    int run_loop = 1;
+    while(run_loop == 1){
+        // If pos is -1 then we should flipp all bits in input file.
+        if(pos == -1){
+            flipp_all_bits = 1;
+            pos = 0;
         }
-        // Executable probably crashed, save input file. 
-        else {
-            printf("Exit code:%d\n",status);
-            time_t T= time(NULL);
-            struct  tm tm = *localtime(&T);
+        for(int i=0; i<255; i++){
+            printf("\n\n");
+            value++;
+            printf("Value: %hhx\n",value);
 
-            char year[4];
-            sprintf(year, "%d", tm.tm_year+1900);
+            // Create file to use as input.
+            create_seedfile(original_filedata,file_size,pos,v_ptr,tmp_file);
 
-            char month[2];
-            sprintf(month,"%d",tm.tm_mon+1);
+            // Run executable with newly created input.
+            int status = run_cmd(cmd,cmd_argv,wait_pid);
 
-            char day[2];
-            sprintf(day,"%d", tm.tm_mday);
+            // Executable did not crash, remove input file.
+            if(status == 0) {
+                int remove_status = remove(tmp_file);
+                if(remove_status != 0) {
+                    printf("Error removing tmp file\n");
+                }
+                printf("Exit code 0\n");
+            }
+            // Executable probably crashed, save input file. 
+            else {
+                printf("Exit code:%d\n",status);
+                time_t T= time(NULL);
+                struct  tm tm = *localtime(&T);
 
-            char hour[2];
-            sprintf(hour,"%d",tm.tm_hour);
+                char year[4];
+                sprintf(year, "%d", tm.tm_year+1900);
 
-            char min[2];
-            sprintf(min,"%d",tm.tm_min);
+                char month[2];
+                sprintf(month,"%d",tm.tm_mon+1);
 
-            char sec[2];
-            sprintf(sec,"%d",tm.tm_sec);
+                char day[2];
+                sprintf(day,"%d", tm.tm_mday);
 
-            char new_filename[sizeof(year)+sizeof(month)+sizeof(day)+sizeof(hour)+sizeof(min)+sizeof(sec)];
-            strcpy(new_filename,year);
-            strcat(new_filename,month);
-            strcat(new_filename,day);
-            strcat(new_filename,hour);
-            strcat(new_filename,min);
-            strcat(new_filename,sec);
+                char hour[2];
+                sprintf(hour,"%d",tm.tm_hour);
 
-            char out_file[sizeof(out_dir) + sizeof(new_filename)];
-            strcpy(out_file,out_dir);
-            strcat(out_file,new_filename);
+                char min[2];
+                sprintf(min,"%d",tm.tm_min);
 
-            int rename_status = rename(tmp_file,out_file);
-            printf("tmpFile: %s\n",tmp_file);
-            printf("outFile: %s\n",out_file);
-            if(rename_status != 0) {
-                printf("Error moving tmp file, exiting\n");
-                return 1;
+                char sec[2];
+                sprintf(sec,"%d",tm.tm_sec);
+
+                char new_filename[sizeof(year)+sizeof(month)+sizeof(day)+sizeof(hour)+sizeof(min)+sizeof(sec)];
+                strcpy(new_filename,year);
+                strcat(new_filename,month);
+                strcat(new_filename,day);
+                strcat(new_filename,hour);
+                strcat(new_filename,min);
+                strcat(new_filename,sec);
+
+                char out_file[sizeof(out_dir) + sizeof(new_filename)];
+                strcpy(out_file,out_dir);
+                strcat(out_file,new_filename);
+
+                int rename_status = rename(tmp_file,out_file);
+                printf("tmpFile: %s\n",tmp_file);
+                printf("outFile: %s\n",out_file);
+                if(rename_status != 0) {
+                    printf("Error moving tmp file, exiting\n");
+                    return 1;
+                }
+            } 
+        }
+        //If we should only bit flipp a specific offset then only run loop one time.
+        if(flipp_all_bits == 0){
+            run_loop = 0;
+        // If we should bit flipp all bits in input file.
+        } else {
+            pos++;
+            if(pos > file_size){
+                run_loop = 0;
             }
         }
-      
     }
 
     return 0;
