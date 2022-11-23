@@ -150,35 +150,10 @@ int main(int argc, char *argv[]){
             // Executable probably crashed, save input file. 
             else {
                 printf("Exit code:%d\n",status);
-                time_t T= time(NULL);
-                struct  tm tm = *localtime(&T);
-
-                char year[4];
-                sprintf(year, "%d", tm.tm_year+1900);
-
-                char month[2];
-                sprintf(month,"%d",tm.tm_mon+1);
-
-                char day[2];
-                sprintf(day,"%d", tm.tm_mday);
-
-                char hour[2];
-                sprintf(hour,"%d",tm.tm_hour);
-
-                char min[2];
-                sprintf(min,"%d",tm.tm_min);
-
-                char sec[2];
-                sprintf(sec,"%d",tm.tm_sec);
-
-                char new_filename[sizeof(year)+sizeof(month)+sizeof(day)+sizeof(hour)+sizeof(min)+sizeof(sec)];
-                strcpy(new_filename,year);
-                strcat(new_filename,month);
-                strcat(new_filename,day);
-                strcat(new_filename,hour);
-                strcat(new_filename,min);
-                strcat(new_filename,sec);
-
+                char new_filename[64];
+                //sprintf(new_filename,"pos:%d_value:%hhx",pos,value);
+                snprintf(new_filename,63,"pos:%d_value:%hhx",pos,value);
+                
                 char out_file[sizeof(out_dir) + sizeof(new_filename)];
                 strcpy(out_file,out_dir);
                 strcat(out_file,new_filename);
