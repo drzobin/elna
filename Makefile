@@ -7,4 +7,4 @@ test_binary:
 	$(CC) $(CFLAGS) test_binary.c shared_funcs.c -o test_binary
 
 elna:
-	$(CC) $(CFLAGS) elna.c -o elna
+	$(CC) $(CFLAGS) elna.c shared_funcs.c -o elna
