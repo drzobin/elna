@@ -35,7 +35,6 @@ char *read_file(char *file,size_t size){
     FILE *ptr_fp;
 
     // Allocate  memory on heap for file
-    //ptr_file = (char *)malloc(size);
     ptr_file = (char *)malloc(size);
 
 
@@ -63,9 +62,10 @@ char *read_file(char *file,size_t size){
     fclose(ptr_fp);
 
 
-    for(int i = 0;i < size; i++){
-        printf("pos: %d hex: %hhx\n",i,ptr_file[i]);
-    }
+    // Print data in file as offset and hex value.
+    //for(int i = 0;i < size; i++){
+    //    printf("pos: %d hex: %hhx\n",i,ptr_file[i]);
+    //}
 
     return ptr_file;
 }
