@@ -152,7 +152,7 @@ int main(int argc, char *argv[]){
                 printf("Exit code:%d\n",status);
                 char new_filename[64];
                 //sprintf(new_filename,"pos:%d_value:%hhx",pos,value);
-                snprintf(new_filename,63,"pos:%d_value:%hhx",pos,value);
+                snprintf(new_filename,63,"offset:%d_value:0x%hhx",pos,value);
                 
                 char out_file[sizeof(out_dir) + sizeof(new_filename)];
                 strcpy(out_file,out_dir);
