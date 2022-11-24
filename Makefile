@@ -1,10 +1,10 @@
 CC=clang
 CFLAG=-g -Wall -ansi -pedantic
 
-all: elna test_binary
+all: elna crash_me
 
-test_binary:
-	$(CC) $(CFLAGS) test_binary.c shared_funcs.c -o test_binary
+crash_me:
+	$(CC) $(CFLAGS) crash_me.c shared_funcs.c -o crash_me
 
 elna:
 	$(CC) $(CFLAGS) elna.c shared_funcs.c -o elna
