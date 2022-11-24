@@ -1,4 +1,4 @@
-// Code by Robin DrZobin Larsson
+// Code by Robin Larsson aka drzobin
 // robin.larsson@protonmail.ch
 // 2022-11-02
 
