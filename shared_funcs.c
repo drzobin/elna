@@ -44,21 +44,21 @@ char *read_file(char *file,size_t size){
         printf("Unable to open the file!\n");
         exit(1);
     }
-    else 
-    {
-        printf("Opened file successfully for reading.\n");
-    }
+    //else 
+    //{
+    //    printf("Opened file successfully for reading.\n");
+    //}
 
     // Reading file into memory
     if(fread(ptr_file, size, 1, ptr_fp) != 1)
     {
         printf( "Read error!\n" );
-	exit( 1 );
+        exit( 1 );
     }
-    else 
-    {
-        printf( "Read was successful.\n" );
-    }
+    //else 
+    //{
+    //    printf( "Read was successful.\n" );
+    //}
     fclose(ptr_fp);
 
 
