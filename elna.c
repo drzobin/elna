@@ -80,11 +80,11 @@ void create_seedfile(char *originalFile,size_t size,int pos,char *value,char *ne
 
 int main(int argc, char *argv[]){
     // Full path to command to fuzzed.
-    char cmd[] = "/home/drz/github/elna/test_binary";
+    char cmd[] = "/home/drz/github/elna/crash_me";
 
     // Arguments to command to fuzz.
     char *cmd_argv[3];
-    cmd_argv[0] = "test_binary";
+    cmd_argv[0] = "crash_me";
     cmd_argv[1] = "/home/drz/github/elna/working_dir/test.txt";
     cmd_argv[2] = NULL;
 
