@@ -75,17 +75,17 @@ int main(int argc, char *argv[]){
     // Full path to command to fuzzed.
     char cmd[] = "/home/drz/github/elna/crash_me";
 
+    // Full path to tmp fuzzy file.
+    char tmp_file[] = "/home/drz/github/elna/working_dir/test.txt";
+
     // Arguments to command to fuzz.
     char *cmd_argv[3];
     cmd_argv[0] = "crash_me";
-    cmd_argv[1] = "/home/drz/github/elna/working_dir/test.txt";
+    cmd_argv[1] = tmp_file;
     cmd_argv[2] = NULL;
 
     // Full path to folder that contains seedfiles.
     char seedfile_folder[] = "/home/drz/github/elna/seedfiles/";
-
-    // Full path to tmp fuzzy file.
-    char tmp_file[] = "/home/drz/github/elna/working_dir/test.txt";
 
     // Full path where to save files that crash the program.
     char out_dir[] = "/home/drz/github/elna/results/";
@@ -136,6 +136,10 @@ int main(int argc, char *argv[]){
 
         // Read original seedfile data to heap.
         original_filedata = read_file(file,file_size);
+
+        if(flipp_all_bits == 1){
+            pos = 0;
+        }
 
         // This loop is run on all offsets in seedfile, one iteration per offset in seedfile.
         int run_loop = 1;
