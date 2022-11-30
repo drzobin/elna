@@ -1,5 +1,6 @@
 // Code by Robin Larsson aka drzobin
 // robin.larsson@protonmail.ch
+// me@drz.se
 // 2022-11-07
 
 #ifndef FUNKTION_H_INCLUDED
