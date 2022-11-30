@@ -181,7 +181,7 @@ int main(int argc, char *argv[]){
                     char new_filename[128];
                     snprintf(new_filename,127,"filename:%s_offset:%d_value:0x%hhx",seedfile_name,pos,value);
                 
-                    char out_file[sizeof(out_dir) + sizeof(new_filename)];
+                    char out_file[sizeof(out_dir) + sizeof(new_filename) + 1];
                     strcpy(out_file,out_dir);
                     strcat(out_file,new_filename);
 
