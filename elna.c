@@ -28,7 +28,7 @@ int run_cmd(char *cmd,char *argv[], int run_time)
         int exit_code;
         
         exit_code = execvp(cmd,argv);
-        printf("execvp exit_code:%d\n",exit_code);
+        //printf("execvp exit_code:%d\n",exit_code);
         // This is done by the child process.
         exit(exit_code);
     }
@@ -90,9 +90,6 @@ int main(int argc, char *argv[]){
     // Full path where to save files that crash the program.
     char out_dir[] = "/home/drz/github/elna/results/";
 
-    // Ptr to original file on heap.
-    char *original_filedata;
-
     // Byte offset/possition in input file to fuzz, if set to -1 then flipp all bits in input file.
     int pos = -1;
     
@@ -131,13 +128,16 @@ int main(int argc, char *argv[]){
         // Seedfile size.
         size_t file_size = get_filesize(file);
 
-        printf("Working with seedfile: %s\n", files->d_name);
+        printf("Working with seedfile: %s\n", file);
         printf("File size is: %zu\n",file_size);
+
+        // Ptr to original file on heap.
+        char *original_filedata;
 
         // Read original seedfile data to heap.
         original_filedata = read_file(file,file_size);
-        
-         // This loop is run on all offsets in seedfile, one iteration per offset in seedfile.
+
+        // This loop is run on all offsets in seedfile, one iteration per offset in seedfile.
         int run_loop = 1;
         while(run_loop == 1){
             // If pos is -1 then we should flipp all bits in input file.
@@ -152,9 +152,9 @@ int main(int argc, char *argv[]){
             
             // This loop is run on all the hex values, every iteration is one hex value.
             for(int i=0; i<255; i++){
-                printf("\n\n");
+                //printf("\n\n");
                 value++;
-                printf("Value: %hhx\n",value);
+                //printf("Value: %hhx\n",value);
 
                 // Create file to use as input.
                 create_seedfile(original_filedata,file_size,pos,v_ptr,tmp_file);
@@ -168,13 +168,12 @@ int main(int argc, char *argv[]){
                     if(remove_status != 0) {
                         printf("Error removing tmp file\n");
                     }
-                    printf("Exit code 0\n");
+                    //printf("Exit code 0\n");
                 }
                 // Executable probably crashed, save input file. 
                 else {
                     printf("Exit code:%d\n",status);
                     char new_filename[128];
-                    //sprintf(new_filename,"pos:%d_value:%hhx",pos,value);
                     snprintf(new_filename,127,"filename:%s_offset:%d_value:0x%hhx",seedfile_name,pos,value);
                 
                     char out_file[sizeof(out_dir) + sizeof(new_filename)];
@@ -190,7 +189,7 @@ int main(int argc, char *argv[]){
                     }
                 } 
             }
-            //If we should only bit flipp a specific offset then only run loop one time.
+            // If we should only bit flipp a specific offset then only run loop one time.
             if(flipp_all_bits == 0){
                 run_loop = 0;
             // If we should bit flipp all bits in input file.
