@@ -40,9 +40,6 @@ int main(int argc, char *argv[]) {
 	// Offset of data on heap to parse.
 	int offset = 1;
 	
-	// Print offset value. 
-	printf("offset: %d,data as hex: %hhx, data as int: %d\n",offset,file_data[offset],file_data[offset]);
-	
 	// This function has a stack based overflow vulnerabilitie.
 	if(file_data[offset] == 65){
 		vuln_func();
