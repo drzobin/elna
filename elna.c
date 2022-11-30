@@ -88,6 +88,9 @@ int main(int argc, char *argv[]){
     cmd_argv[1] = "/home/drz/github/elna/working_dir/test.txt";
     cmd_argv[2] = NULL;
 
+    // Full path to folder that contains seedfiles.
+    char seedfile_folder = "/home/drz/github/elna/";
+    
     // Full path to original seed file.
     char file[] = "/home/drz/github/elna/test.txt";
 
@@ -122,12 +125,14 @@ int main(int argc, char *argv[]){
 
     // Start fuzzing.
     int run_loop = 1;
+    // This loop is run on all offsets in seedfile.
     while(run_loop == 1){
         // If pos is -1 then we should flipp all bits in input file.
         if(pos == -1){
             flipp_all_bits = 1;
             pos = 0;
         }
+        // Bitflipp the offset value.
         for(int i=0; i<255; i++){
             printf("\n\n");
             value++;
