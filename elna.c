@@ -81,8 +81,9 @@ int main(int argc, char **argv){
     char *tmp_file;
     
     // Full path to folder that contains seedfiles.
-    char seedfile_folder[] = "/home/drz/github/elna/seedfiles/";
-
+    //char seedfile_folder[] = "/home/drz/github/elna/seedfiles/";
+    char *seedfile_folder;
+    
     // Full path where to save files that crash the program.
     char out_dir[] = "/home/drz/github/elna/results/";
 
@@ -104,6 +105,8 @@ int main(int argc, char **argv){
         switch (c) {
         case 's':
             printf ("User has invoked with -s %s\n", optarg);
+            seedfile_folder = (char *)malloc(strlen(optarg) + 1);
+            strncpy(seedfile_folder,optarg,strlen(optarg) + 1);
             break;
         case 'o':
             printf ("User has invoked with -o %s.\n", optarg);
@@ -111,9 +114,8 @@ int main(int argc, char **argv){
         // Set working file. This is the bitflipped seedfile that will be written and removes many times.
         case 'w':
             printf ("User has invoked with -w %s.\n", optarg);
-            size_t len = strlen(optarg) + 1;
-            tmp_file = (char *)malloc(len);
-            strncpy(tmp_file,optarg,len);
+            tmp_file = (char *)malloc(strlen(optarg) + 1);
+            strncpy(tmp_file,optarg,strlen(optarg) + 1);
             break;
         case 'p':
             printf ("User has invoked with -p %s.\n", optarg);
