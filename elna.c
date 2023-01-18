@@ -72,19 +72,14 @@ void create_seedfile(char *originalFile,size_t size,int pos,char *value,char *ne
     fclose(ptr_fp);    
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char **argv){
     // Full path to command to fuzzed.
     char cmd[] = "/home/drz/github/elna/crash_me";
 
-    // Full path to tmp fuzzy file.
-    char tmp_file[] = "/home/drz/github/elna/working_dir/test.txt";
-
-    // Arguments to command to fuzz.
-    char *cmd_argv[3];
-    cmd_argv[0] = "crash_me";
-    cmd_argv[1] = tmp_file;
-    cmd_argv[2] = NULL;
-
+    // Full path to tmp working file. This is the bitflipped seedfile that will be written to an removed many times.
+    //char tmp_file[] = "/home/drz/github/elna/working_dir/test.txt";
+    char *tmp_file;
+    
     // Full path to folder that contains seedfiles.
     char seedfile_folder[] = "/home/drz/github/elna/seedfiles/";
 
@@ -97,6 +92,70 @@ int main(int argc, char *argv[]){
     // Number of seconds to wait for fuzzed program before killing it. If set to -1 we will wait until it has exit.
     int wait_pid = -1;
     
+    int i;
+    while (1) {
+        char c;
+
+        c = getopt (argc, argv, "s:o:w:p:t:c:");
+        if (c == -1) {
+            /* We have finished processing all the arguments. */
+            break;
+        }
+        switch (c) {
+        case 's':
+            printf ("User has invoked with -s %s\n", optarg);
+            break;
+        case 'o':
+            printf ("User has invoked with -o %s.\n", optarg);
+            break;
+        // Set working file. This is the bitflipped seedfile that will be written and removes many times.
+        case 'w':
+            printf ("User has invoked with -w %s.\n", optarg);
+            size_t len = strlen(optarg) + 1;
+            tmp_file = (char *)malloc(len);
+            strncpy(tmp_file,optarg,len);
+            break;
+        case 'p':
+            printf ("User has invoked with -p %s.\n", optarg);
+            break;
+        case 't':
+            printf ("User has invoked with -t %s.\n", optarg);
+            break;
+        case 'c':
+            printf ("User has invoked with -c %s.\n", optarg);
+            break;
+        case '?':
+        default:
+            printf ("Usage: %s [flags]\n\n",argv[0]);
+            printf ("Flags: \n");
+            printf ("-s Full path to folder with seedfile\n");
+            printf ("-o Full path to folder where crashes should be saved\n");
+            printf("-w Full path to file where mutated seedfile should be saved\n");
+            printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped\n");
+            printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself\n");
+            printf("-c Full command of program that should be fuzzed, replace input file with @@\n");
+        }
+    }
+
+    /* Now set the values of "argc" and "argv" to the values after the
+       options have been processed, above. */
+    argc -= optind;
+    argv += optind;
+
+    /* Now do something with the remaining command-line arguments, if
+       necessary. */
+    if (argc > 0) {
+        printf ("There are %d command-line arguments left to process:\n", argc);
+        for (i = 0; i < argc; i++) {
+            printf ("    Argument %d: '%s'\n", i + 1, argv[i]);
+        }
+    }
+    // Arguments to command to fuzz.
+    char *cmd_argv[3];
+    cmd_argv[0] = "crash_me";
+    cmd_argv[1] = tmp_file;
+    cmd_argv[2] = NULL;
+
     // If this is set to 1, all bits in input file will be flipped.
     int flipp_all_bits = 0;
 
