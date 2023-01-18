@@ -103,26 +103,31 @@ int main(int argc, char **argv){
             break;
         }
         switch (c) {
+        // Set seedfile folder, this is the folder that contins the seedfiles.
         case 's':
             printf ("User has invoked with -s %s\n", optarg);
             seedfile_folder = (char *)malloc(strlen(optarg) + 1);
             strncpy(seedfile_folder,optarg,strlen(optarg) + 1);
             break;
+        // Output dir, this is where the crashes/results will be saved.
         case 'o':
             printf ("User has invoked with -o %s.\n", optarg);
             break;
-        // Set working file. This is the bitflipped seedfile that will be written and removes many times.
+        // Set working file, this is the bitflipped seedfile that will be written and removes many times.
         case 'w':
             printf ("User has invoked with -w %s.\n", optarg);
             tmp_file = (char *)malloc(strlen(optarg) + 1);
             strncpy(tmp_file,optarg,strlen(optarg) + 1);
             break;
+        // Set offset/possition in seedfile that should be flipped, if -1 all offsets/possistions will be flipped.
         case 'p':
             printf ("User has invoked with -p %s.\n", optarg);
             break;
+        // Set time before killing fuzzed program, if -1 we will wait until fuzzed program exit.
         case 't':
             printf ("User has invoked with -t %s.\n", optarg);
             break;
+        // Set the full path to fuzzed program and its arguments, replace input file with @@.
         case 'c':
             printf ("User has invoked with -c %s.\n", optarg);
             break;
