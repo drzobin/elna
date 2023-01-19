@@ -85,8 +85,9 @@ int main(int argc, char **argv){
     char *seedfile_folder;
     
     // Full path where to save files that crash the program.
-    char out_dir[] = "/home/drz/github/elna/results/";
-
+    //char out_dir[] = "/home/drz/github/elna/results/";
+    char *out_dir;
+    
     // Byte offset/possition in input file to fuzz, if set to -1 then flipp all bits in input file.
     int pos = -1;
     
@@ -109,9 +110,11 @@ int main(int argc, char **argv){
             seedfile_folder = (char *)malloc(strlen(optarg) + 1);
             strncpy(seedfile_folder,optarg,strlen(optarg) + 1);
             break;
-        // Output dir, this is where the crashes/results will be saved.
+        // Set output dir, this is where the crashes/results will be saved.
         case 'o':
             printf ("User has invoked with -o %s.\n", optarg);
+            out_dir = (char *)malloc(strlen(optarg) + 1);
+            strncpy(out_dir,optarg,strlen(optarg) + 1);
             break;
         // Set working file, this is the bitflipped seedfile that will be written and removes many times.
         case 'w':
