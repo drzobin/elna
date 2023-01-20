@@ -1,3 +1,8 @@
+# Code by Robin Larsson aka drzobin
+# robin.larsson@protonmail.ch
+# me@drz.se
+# 2023-01-20
+
 CC=clang
 CFLAG=-g -Wall -ansi -pedantic
 
