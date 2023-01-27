@@ -109,21 +109,21 @@ int main(int argc, char **argv){
             printf ("User has invoked with -s %s\n", optarg);
             //seedfile_folder = (char *)malloc(strlen(optarg) + 1);
             //strncpy(seedfile_folder,optarg,strlen(optarg) + 1);
-            seedfile_folder = optarg;
+            seedfile_folder = &optarg[0];
             break;
         // Set output dir, this is where the crashes/results will be saved.
         case 'o':
             printf ("User has invoked with -o %s\n", optarg);
             //out_dir = (char *)malloc(strlen(optarg) + 1);
             //strncpy(out_dir,optarg,strlen(optarg) + 1);
-            out_dir = optarg;
+            out_dir = &optarg[0];
             break;
         // Set working file, this is the bitflipped seedfile that will be written and removes many times.
         case 'w':
             printf ("User has invoked with -w %s\n", optarg);
             //tmp_file = (char *)malloc(strlen(optarg) + 1);
             //strncpy(tmp_file,optarg,strlen(optarg) + 1);
-            tmp_file = optarg;
+            tmp_file = &optarg[0];
             break;
         // Set offset/possition in seedfile that should be flipped, if -1 all offsets/possistions will be flipped.
         case 'p':
