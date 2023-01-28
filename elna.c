@@ -133,6 +133,7 @@ int main(int argc, char **argv){
         // Set time before killing fuzzed program, if -1 we will wait until fuzzed program exit.
         case 't':
             printf ("User has invoked with -t %s\n", optarg);
+            sscanf(optarg,"%d",&wait_pid);
             break;
         // Set the full path to fuzzed program and its arguments, replace input file with @@.
         case 'c':
