@@ -141,9 +141,9 @@ int main(int argc, char **argv){
             break;
         case '?':
         default:
-            printf ("Usage: %s [flags]\n\n",argv[0]);
-            printf ("Flags: \n");
-            printf ("-s Full path to folder with seedfile\n");
+            printf ("Usage: %s -s [] -o [] -w [] -c []\n\n",argv[0]);
+            printf ("Arguments: \n");
+            printf ("-s Full path to folder with seedfiles\n");
             printf ("-o Full path to folder where crashes should be saved\n");
             printf("-w Full path to file where mutated seedfile should be saved\n");
             printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped, this is default\n");
