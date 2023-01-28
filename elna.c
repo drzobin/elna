@@ -128,6 +128,7 @@ int main(int argc, char **argv){
         // Set offset/possition in seedfile that should be flipped, if -1 all offsets/possistions will be flipped.
         case 'p':
             printf ("User has invoked with -p %s\n", optarg);
+            sscanf(optarg,"%d",&pos);
             break;
         // Set time before killing fuzzed program, if -1 we will wait until fuzzed program exit.
         case 't':
@@ -144,8 +145,8 @@ int main(int argc, char **argv){
             printf ("-s Full path to folder with seedfile\n");
             printf ("-o Full path to folder where crashes should be saved\n");
             printf("-w Full path to file where mutated seedfile should be saved\n");
-            printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped\n");
-            printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself\n");
+            printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped, this is default\n");
+            printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself, this is default\n");
             printf("-c Full command of program that should be fuzzed including args and flags, replace input file path with @@\n");
         }
     }
