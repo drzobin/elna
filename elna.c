@@ -99,7 +99,7 @@ int main(int argc, char **argv){
     while (1) {
         char c;
 
-        c = getopt (argc, argv, "s:o:w:p:t:c:");
+        c = getopt (argc, argv, "s:o:w:p:t:");
         if (c == -1) {
             /* We have finished processing all the arguments. */
             break;
@@ -107,49 +107,44 @@ int main(int argc, char **argv){
         switch (c) {
         // Set seedfile folder, this is the folder that contins the seedfiles.
         case 's':
-            printf ("User has invoked with -s %s\n", optarg);
+            printf ("Setting seedfiles folder to: %s\n", optarg);
             //seedfile_folder = (char *)malloc(strlen(optarg) + 1);
             //strncpy(seedfile_folder,optarg,strlen(optarg) + 1);
             seedfile_folder = &optarg[0];
             break;
         // Set output dir, this is where the crashes/results will be saved.
         case 'o':
-            printf ("User has invoked with -o %s\n", optarg);
+            printf ("Setting results dir to: %s\n", optarg);
             //out_dir = (char *)malloc(strlen(optarg) + 1);
             //strncpy(out_dir,optarg,strlen(optarg) + 1);
             out_dir = &optarg[0];
             break;
         // Set working file, this is the bitflipped seedfile that will be written and removes many times.
         case 'w':
-            printf ("User has invoked with -w %s\n", optarg);
+            printf ("Setting working file to: %s\n", optarg);
             //tmp_file = (char *)malloc(strlen(optarg) + 1);
             //strncpy(tmp_file,optarg,strlen(optarg) + 1);
             tmp_file = &optarg[0];
             break;
         // Set offset/possition in seedfile that should be flipped, if -1 all offsets/possistions will be flipped.
         case 'p':
-            printf ("User has invoked with -p %s\n", optarg);
+            printf ("Setting offset to be fuzzed to: %s\n", optarg);
             sscanf(optarg,"%d",&pos);
             break;
         // Set time before killing fuzzed program, if -1 we will wait until fuzzed program exit.
         case 't':
-            printf ("User has invoked with -t %s\n", optarg);
+            printf ("Setting time to: %s\n", optarg);
             sscanf(optarg,"%d",&wait_pid);
-            break;
-        // Set the full path to fuzzed program and its arguments, replace input file with @@.
-        case 'c':
-            printf ("User has invoked with -c %s\n", optarg);
             break;
         case '?':
         default:
             printf ("Usage: %s -s [] -o [] -w [] -c []\n\n",argv[0]);
             printf ("Arguments: \n");
             printf ("-s Full path to folder with seedfiles\n");
-            printf ("-o Full path to folder where crashes should be saved\n");
+            printf ("-o Full path to folder where crashes/results should be saved\n");
             printf("-w Full path to file where mutated seedfile should be saved\n");
             printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped, this is default\n");
             printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself, this is default\n");
-            printf("-c Full command of program that should be fuzzed including args and flags, replace input file path with @@\n\n");
         }
     }
 
@@ -157,7 +152,7 @@ int main(int argc, char **argv){
     int arg_left = (argc - optind) + 1;
     char *cmd_argv[arg_left];
 
-    // This is the argument that is left.
+    // This is the argument that is left, lets parse them to get the program to be fuzzed and its args.
     int count = 0;
     for(; optind < argc; optind++){     
         printf("extra arguments: %s\n", argv[optind]);
@@ -173,19 +168,18 @@ int main(int argc, char **argv){
     }
     cmd_argv[arg_left] = NULL;
 
-    /* Now set the values of "argc" and "argv" to the values after the
-       options have been processed, above. */
+    // Now set the values of "argc" and "argv" to the values after the options have been processed, above.
     argc -= optind;
     argv += optind;
 
     /* Now do something with the remaining command-line arguments, if
        necessary. */
-    if (argc > 0) {
-        printf ("There are %d command-line arguments left to process:\n", argc);
-        for (i = 0; i < argc; i++) {
-            printf ("    Argument %d: '%s'\n", i + 1, argv[i]);
-        }
-    }
+    //if (argc > 0) {
+    //    printf ("There are %d command-line arguments left to process:\n", argc);
+    //    for (i = 0; i < argc; i++) {
+    //        printf ("    Argument %d: '%s'\n", i + 1, argv[i]);
+    //    }
+    //}
     // Arguments to command to fuzz.
     //char *cmd_argv[3];
     //cmd_argv[0] = "crash_me";
@@ -201,7 +195,7 @@ int main(int argc, char **argv){
     struct dirent *files;
     DIR *dir = opendir(seedfile_folder);
     if (dir == NULL){
-        printf("Directory cannot be opened!" );
+        printf("Error: Directory %s can not be open.",seedfile_folder);
         return 0;
     }
 
