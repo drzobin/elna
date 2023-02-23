@@ -149,9 +149,29 @@ int main(int argc, char **argv){
             printf("-w Full path to file where mutated seedfile should be saved\n");
             printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped, this is default\n");
             printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself, this is default\n");
-            printf("-c Full command of program that should be fuzzed including args and flags, replace input file path with @@\n");
+            printf("-c Full command of program that should be fuzzed including args and flags, replace input file path with @@\n\n");
         }
     }
+
+    // Number of argument left to parse + 1 for NULL.
+    int arg_left = (argc - optind) + 1;
+    char *cmd_argv[arg_left];
+
+    // This is the argument that is left.
+    int count = 0;
+    for(; optind < argc; optind++){     
+        printf("extra arguments: %s\n", argv[optind]);
+        printf("optind size: %d\n",optind); 
+        printf("argc size: %d\n",argc);
+
+        if(strcmp(argv[optind],"@@") == 0){
+            cmd_argv[count] = tmp_file;
+        } else {
+            cmd_argv[count] = argv[optind];
+        }
+        count = count + 1;
+    }
+    cmd_argv[arg_left] = NULL;
 
     /* Now set the values of "argc" and "argv" to the values after the
        options have been processed, above. */
@@ -167,10 +187,10 @@ int main(int argc, char **argv){
         }
     }
     // Arguments to command to fuzz.
-    char *cmd_argv[3];
-    cmd_argv[0] = "crash_me";
-    cmd_argv[1] = tmp_file;
-    cmd_argv[2] = NULL;
+    //char *cmd_argv[3];
+    //cmd_argv[0] = "crash_me";
+    //cmd_argv[1] = tmp_file;
+    //cmd_argv[2] = NULL;
 
     // If this is set to 1, all bits in input file will be flipped.
     int flipp_all_bits = 0;
