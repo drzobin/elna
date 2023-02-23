@@ -13,6 +13,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <dirent.h>
+#include <signal.h>
 
 /*
 Run a command, kill the process if it hasent exit after sleep time.
