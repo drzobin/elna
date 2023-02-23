@@ -181,7 +181,7 @@ int main(int argc, char **argv){
     struct dirent *files;
     DIR *dir = opendir(seedfile_folder);
     if (dir == NULL){
-        printf("Error: Directory %s can not be open.",seedfile_folder);
+        printf("Error: Directory seedfile folder that was set to %s can not be open. \n",seedfile_folder);
         return 0;
     }
 
