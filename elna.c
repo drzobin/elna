@@ -172,20 +172,6 @@ int main(int argc, char **argv){
     argc -= optind;
     argv += optind;
 
-    /* Now do something with the remaining command-line arguments, if
-       necessary. */
-    //if (argc > 0) {
-    //    printf ("There are %d command-line arguments left to process:\n", argc);
-    //    for (i = 0; i < argc; i++) {
-    //        printf ("    Argument %d: '%s'\n", i + 1, argv[i]);
-    //    }
-    //}
-    // Arguments to command to fuzz.
-    //char *cmd_argv[3];
-    //cmd_argv[0] = "crash_me";
-    //cmd_argv[1] = tmp_file;
-    //cmd_argv[2] = NULL;
-
     // If this is set to 1, all bits in input file will be flipped.
     int flipp_all_bits = 0;
 
