@@ -74,19 +74,13 @@ void create_seedfile(char *originalFile,size_t size,int pos,char *value,char *ne
 }
 
 int main(int argc, char **argv){
-    // Full path to command to fuzzed.
-    char cmd[] = "/home/drz/github/elna/crash_me";
-
     // Full path to tmp working file. This is the bitflipped seedfile that will be written to an removed many times.
-    //char tmp_file[] = "/home/drz/github/elna/working_dir/test.txt";
     char *tmp_file;
     
     // Full path to folder that contains seedfiles.
-    //char seedfile_folder[] = "/home/drz/github/elna/seedfiles/";
     char *seedfile_folder;
     
     // Full path where to save files that crash the program.
-    //char out_dir[] = "/home/drz/github/elna/results/";
     char *out_dir;
     
     // Byte offset/possition in input file to fuzz, if set to -1 then flipp all bits in input file.
@@ -108,22 +102,16 @@ int main(int argc, char **argv){
         // Set seedfile folder, this is the folder that contins the seedfiles.
         case 's':
             printf ("Setting seedfiles folder to: %s\n", optarg);
-            //seedfile_folder = (char *)malloc(strlen(optarg) + 1);
-            //strncpy(seedfile_folder,optarg,strlen(optarg) + 1);
             seedfile_folder = &optarg[0];
             break;
         // Set output dir, this is where the crashes/results will be saved.
         case 'o':
             printf ("Setting results dir to: %s\n", optarg);
-            //out_dir = (char *)malloc(strlen(optarg) + 1);
-            //strncpy(out_dir,optarg,strlen(optarg) + 1);
             out_dir = &optarg[0];
             break;
         // Set working file, this is the bitflipped seedfile that will be written and removes many times.
         case 'w':
             printf ("Setting working file to: %s\n", optarg);
-            //tmp_file = (char *)malloc(strlen(optarg) + 1);
-            //strncpy(tmp_file,optarg,strlen(optarg) + 1);
             tmp_file = &optarg[0];
             break;
         // Set offset/possition in seedfile that should be flipped, if -1 all offsets/possistions will be flipped.
@@ -138,10 +126,10 @@ int main(int argc, char **argv){
             break;
         case '?':
         default:
-            printf ("Usage: %s -s [] -o [] -w [] -c []\n\n",argv[0]);
+            printf ("Usage: %s -s [] -o [] -w []\n\n",argv[0]);
             printf ("Arguments: \n");
             printf ("-s Full path to folder with seedfiles\n");
-            printf ("-o Full path to folder where crashes/results should be saved\n");
+            printf ("-o Full path to folder where crashes/results/stats should be saved\n");
             printf("-w Full path to file where mutated seedfile should be saved\n");
             printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped, this is default\n");
             printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself, this is default\n");
@@ -240,7 +228,7 @@ int main(int argc, char **argv){
                 create_seedfile(original_filedata,file_size,pos,v_ptr,tmp_file);
 
                 // Run executable with newly created input.
-                int status = run_cmd(cmd,cmd_argv,wait_pid);
+                int status = run_cmd(cmd_argv[0],cmd_argv,wait_pid);
 
                 // Executable did not crash, remove input file.
                 if(status == 0) {
