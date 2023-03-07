@@ -220,9 +220,10 @@ int main(int argc, char **argv){
             
             // This loop is run on all the hex values, every iteration is one hex value.
             for(int i=0; i<255; i++){
-                //printf("\n\n");
-                //value++;
-                //printf("Value: %hhx\n",value);
+                // Write to status log when value is 0xEE.
+                if(value == '\xee'){
+                    printf("Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
+                }
 
                 // Create file to use as input.
                 create_seedfile(original_filedata,file_size,pos,v_ptr,tmp_file);
