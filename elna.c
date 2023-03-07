@@ -163,6 +163,12 @@ int main(int argc, char **argv){
     // If this is set to 1, all bits in input file will be flipped.
     int flipp_all_bits = 0;
 
+    // File to write status to.
+    int status_file_len = strlen(out_dir) + strlen("/status.log") + 1;
+    char status_file[status_file_len];
+    snprintf(status_file, status_file_len, "%s%s", out_dir,"/status.log");
+     
+
     // Start fuzzing.
 
     // Open seedfile folder.
@@ -220,9 +226,12 @@ int main(int argc, char **argv){
             
             // This loop is run on all the hex values, every iteration is one hex value.
             for(int i=0; i<255; i++){
-                // Write to status log when value is 0xEE.
+                // Write status to cmd and status_file when value is 0xEE.
                 if(value == '\xee'){
                     printf("Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
+                    FILE *status_file_ptr = fopen(status_file, "a");
+                    fprintf(status_file_ptr,"Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
+                    fclose(status_file_ptr);
                 }
 
                 // Create file to use as input.
