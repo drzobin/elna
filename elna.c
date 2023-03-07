@@ -106,7 +106,7 @@ int main(int argc, char **argv){
             break;
         // Set output dir, this is where the crashes/results will be saved.
         case 'o':
-            printf ("Setting results dir to: %s\n", optarg);
+            printf ("Setting out/results dir to: %s\n", optarg);
             out_dir = &optarg[0];
             break;
         // Set working file, this is the bitflipped seedfile that will be written and removes many times.
@@ -129,7 +129,7 @@ int main(int argc, char **argv){
             printf ("Usage: %s -s [] -o [] -w []\n\n",argv[0]);
             printf ("Arguments: \n");
             printf ("-s Full path to folder with seedfiles\n");
-            printf ("-o Full path to folder where crashes/results/stats should be saved\n");
+            printf ("-o Full path to folder where output/crashes/results/stats should be saved\n");
             printf("-w Full path to file where mutated seedfile should be saved\n");
             printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped, this is default\n");
             printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself, this is default\n");
@@ -221,7 +221,7 @@ int main(int argc, char **argv){
             // This loop is run on all the hex values, every iteration is one hex value.
             for(int i=0; i<255; i++){
                 //printf("\n\n");
-                value++;
+                //value++;
                 //printf("Value: %hhx\n",value);
 
                 // Create file to use as input.
@@ -256,6 +256,7 @@ int main(int argc, char **argv){
                         return 1;
                     }
                 } 
+                value++;
             }
             // If we should only bit flipp a specific offset then only run loop one time.
             if(flipp_all_bits == 0){
