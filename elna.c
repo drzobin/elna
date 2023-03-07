@@ -126,7 +126,7 @@ int main(int argc, char **argv){
             break;
         case '?':
         default:
-            printf ("Usage: %s -s [] -o [] -w []\n\n",argv[0]);
+            printf ("Usage: %s -s [seedfile folder] -o [output folder] -w [working file]\n\n",argv[0]);
             printf ("Arguments: \n");
             printf ("-s Full path to folder with seedfiles\n");
             printf ("-o Full path to folder where output/crashes/results/stats should be saved\n");
