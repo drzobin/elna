@@ -240,16 +240,11 @@ int main(int argc, char **argv){
                 // Run executable with newly created input.
                 int status = run_cmd(cmd_argv[0],cmd_argv,wait_pid);
 
-                // Executable did not crash, remove input file.
-                if(status == 0) {
-                    int remove_status = remove(tmp_file);
-                    if(remove_status != 0) {
-                        printf("Error removing tmp file\n");
-                    }
-                    //printf("Exit code 0\n");
-                }
-                // Executable probably crashed, save input file. 
-                else {
+                // Executable probably crashed, save input file.
+                // Signal 2 = sigint
+                // signal 9 = sigkill
+                // signal 11 = sigsegv
+                if(status == 2 || status == 9 || status == 11) {
                     printf("Exit code:%d\n",status);
                     char new_filename[128];
                     snprintf(new_filename,127,"filename:%s_offset:%d_value:0x%hhx",seedfile_name,pos,value);
@@ -266,6 +261,14 @@ int main(int argc, char **argv){
                         return 1;
                     }
                 } 
+                // Executable did not crash, remove input file.
+                else {
+                    int remove_status = remove(tmp_file);
+                    if(remove_status != 0) {
+                        printf("Error removing tmp file\n");
+                    }
+                    //printf("Exit code 0\n");
+                }
                 value++;
             }
             // If we should only bit flipp a specific offset then only run loop one time.
