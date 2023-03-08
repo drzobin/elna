@@ -143,10 +143,6 @@ int main(int argc, char **argv){
     // This is the argument that is left, lets parse them to get the program to be fuzzed and its args.
     int count = 0;
     for(; optind < argc; optind++){     
-        printf("extra arguments: %s\n", argv[optind]);
-        printf("optind size: %d\n",optind); 
-        printf("argc size: %d\n",argc);
-
         if(strcmp(argv[optind],"@@") == 0){
             cmd_argv[count] = tmp_file;
         } else {
@@ -199,7 +195,6 @@ int main(int argc, char **argv){
         size_t file_size = get_filesize(file);
 
         printf("Working with seedfile: %s\n", file);
-        printf("File size is: %zu\n",file_size);
 
         // Ptr to original file on heap.
         char *original_filedata;
