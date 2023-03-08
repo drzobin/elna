@@ -17,7 +17,7 @@
 
 /*
 Run a command, kill the process if it hasent exit after sleep time.
-@return Exit value of the command. 
+@return Signal that killed the process. 
 */
 int run_cmd(char *cmd,char *argv[], int run_time)
 {
@@ -27,22 +27,45 @@ int run_cmd(char *cmd,char *argv[], int run_time)
     child_pid = fork();
     if(child_pid == 0) {
         // This is run by the child process.
-        int exit_code;
+        execvp(cmd,argv);
+
+        return 0;
+        //int exit_code;
         
-        exit_code = execvp(cmd,argv);
-        //printf("execvp exit_code:%d\n",exit_code);
+        //exit_code = execvp(cmd,argv);
+        // printf("execvp exit_code:%d\n",exit_code);
         // This is done by the child process.
-        exit(exit_code);
+        //exit(exit_code);
+        //if(exit_code == -1){
+        //    return 1;
+        //}else{
+        //    return 0;
+        //}
     }
     else {
         // This is run by the parent.
         if(run_time == -1){
             waitpid(-1, &child_status, 0);
-            return child_status;
+
+            // Return 1 if pid was killed by signal.
+            if(WIFSIGNALED(child_status) == 1){
+                // Return signal number.
+                return WTERMSIG(child_status);
+            } else {
+                return 0;
+            }    
         } else {
             sleep(run_time);
             if(waitpid(-1,&child_status,WNOHANG) == child_pid){
-                return child_status;
+                // Return 1 if pid was killed by signal.
+                if(WIFSIGNALED(child_status) == 1){
+                    printf("Signal:%i\n",WTERMSIG(child_status));
+                
+                    // Return signal number.
+                    return WTERMSIG(child_status);
+                } else {
+                    return 0;
+                }    
             } else {
                 kill(child_pid,SIGKILL);
                 return 0;
@@ -235,12 +258,9 @@ int main(int argc, char **argv){
                 // Run executable with newly created input.
                 int status = run_cmd(cmd_argv[0],cmd_argv,wait_pid);
 
-                // Executable probably crashed, save input file.
-                // Signal 2 = sigint
-                // signal 9 = sigkill
-                // signal 11 = sigsegv
-                if(status == 2 || status == 9 || status == 11) {
-                    printf("Exit code:%d\n",status);
+                // Executable was killed by signal, save input file.
+                if(status != 0){
+                    printf("Killed with signal:%d\n",status);
                     char new_filename[128];
                     snprintf(new_filename,127,"filename:%s_offset:%d_value:0x%hhx",seedfile_name,pos,value);
                 
@@ -256,7 +276,7 @@ int main(int argc, char **argv){
                         return 1;
                     }
                 } 
-                // Executable did not crash, remove input file.
+                // Executable was not killed by signal, remove input file.
                 else {
                     int remove_status = remove(tmp_file);
                     if(remove_status != 0) {
