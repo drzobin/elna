@@ -30,17 +30,6 @@ int run_cmd(char *cmd,char *argv[], int run_time)
         execvp(cmd,argv);
 
         return 0;
-        //int exit_code;
-        
-        //exit_code = execvp(cmd,argv);
-        // printf("execvp exit_code:%d\n",exit_code);
-        // This is done by the child process.
-        //exit(exit_code);
-        //if(exit_code == -1){
-        //    return 1;
-        //}else{
-        //    return 0;
-        //}
     }
     else {
         // This is run by the parent.
@@ -282,7 +271,6 @@ int main(int argc, char **argv){
                     if(remove_status != 0) {
                         printf("Error removing tmp file\n");
                     }
-                    //printf("Exit code 0\n");
                 }
                 value++;
             }
