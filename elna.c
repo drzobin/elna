@@ -233,7 +233,6 @@ int main(int argc, char **argv){
             
             // This loop is run on all the hex values, every iteration is one hex value.
             for(int i=0; i<256; i++){
-                printf("Target:%s Seedfile:%s Offset:%i Value:0x%hhx\n",cmd_argv[0],seedfile_name,pos,value);
                 // Write status to cmd and status_file when value is 0xEE.
                 if(value == '\xee'){
                     printf("Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
