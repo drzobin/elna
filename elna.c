@@ -218,6 +218,8 @@ int main(int argc, char **argv){
             pos = 0;
         }
 
+        printf("\n");
+
         // This loop is run on all offsets in seedfile, one iteration per offset in seedfile.
         int run_loop = 1;
         while(run_loop == 1){
