@@ -136,13 +136,22 @@ int main(int argc, char **argv){
         // Set seedfile folder, this is the folder that contins the seedfiles.
         case 's':
             printf ("Setting seedfiles folder to: %s\n", optarg);
-	    is_dir(&optarg[0]);
-            seedfile_folder = &optarg[0];
+	    if (is_dir(&optarg[0]) == 1){
+                seedfile_folder = &optarg[0];
+	    } else {
+		printf("Error: Seedfile folder is not a folder :(\n");
+                exit(1);
+            }
             break;
-        // Set output dir, this is where the crashes/results will be saved.
+        // Set output folder, this is where the crashes/results will be saved.
         case 'o':
-            printf ("Setting out/results dir to: %s\n", optarg);
-            out_dir = &optarg[0];
+            printf ("Setting out/results folder to: %s\n", optarg);
+	    if(is_dir(&optarg[0]) == 1){
+                out_dir = &optarg[0];
+	    } else {
+		printf("Error: out/results folder is not a folder :(\n");
+                exit(1);
+            }
             break;
         // Set working file, this is the bitflipped seedfile that will be written and removes many times.
         case 'w':
