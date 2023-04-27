@@ -19,7 +19,7 @@
 
 /*
 Run a command, kill the process if it hasent exit after sleep time.
-@return Exit value of the command. 
+@return Signal that killed the process. 
 */
 int run_cmd(char *cmd,char *argv[], int run_time)
 {
@@ -29,22 +29,34 @@ int run_cmd(char *cmd,char *argv[], int run_time)
     child_pid = fork();
     if(child_pid == 0) {
         // This is run by the child process.
-        int exit_code;
-        
-        exit_code = execvp(cmd,argv);
-        //printf("execvp exit_code:%d\n",exit_code);
-        // This is done by the child process.
-        exit(exit_code);
+        execvp(cmd,argv);
+
+        return 0;
     }
     else {
         // This is run by the parent.
         if(run_time == -1){
             waitpid(-1, &child_status, 0);
-            return child_status;
+
+            // Return 1 if pid was killed by signal.
+            if(WIFSIGNALED(child_status) == 1){
+                // Return signal number.
+                return WTERMSIG(child_status);
+            } else {
+                return 0;
+            }    
         } else {
             sleep(run_time);
             if(waitpid(-1,&child_status,WNOHANG) == child_pid){
-                return child_status;
+                // Return 1 if pid was killed by signal.
+                if(WIFSIGNALED(child_status) == 1){
+                    printf("Signal:%i\n",WTERMSIG(child_status));
+                
+                    // Return signal number.
+                    return WTERMSIG(child_status);
+                } else {
+                    return 0;
+                }    
             } else {
                 kill(child_pid,SIGKILL);
                 return 0;
@@ -166,10 +178,6 @@ int main(int argc, char **argv){
     // This is the argument that is left, lets parse them to get the program to be fuzzed and its args.
     int count = 0;
     for(; optind < argc; optind++){     
-        printf("extra arguments: %s\n", argv[optind]);
-        printf("optind size: %d\n",optind); 
-        printf("argc size: %d\n",argc);
-
         if(strcmp(argv[optind],"@@") == 0){
             cmd_argv[count] = tmp_file;
         } else {
@@ -222,7 +230,6 @@ int main(int argc, char **argv){
         size_t file_size = get_filesize(file);
 
         printf("Working with seedfile: %s\n", file);
-        printf("File size is: %zu\n",file_size);
 
         // Ptr to original file on heap.
         char *original_filedata;
@@ -233,6 +240,8 @@ int main(int argc, char **argv){
         if(flipp_all_bits == 1){
             pos = 0;
         }
+
+        printf("\n");
 
         // This loop is run on all offsets in seedfile, one iteration per offset in seedfile.
         int run_loop = 1;
@@ -248,7 +257,7 @@ int main(int argc, char **argv){
             char *v_ptr = &value;
             
             // This loop is run on all the hex values, every iteration is one hex value.
-            for(int i=0; i<255; i++){
+            for(int i=0; i<256; i++){
                 // Write status to cmd and status_file when value is 0xEE.
                 if(value == '\xee'){
                     printf("Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
@@ -263,17 +272,9 @@ int main(int argc, char **argv){
                 // Run executable with newly created input.
                 int status = run_cmd(cmd_argv[0],cmd_argv,wait_pid);
 
-                // Executable did not crash, remove input file.
-                if(status == 0) {
-                    int remove_status = remove(tmp_file);
-                    if(remove_status != 0) {
-                        printf("Error removing tmp file\n");
-                    }
-                    //printf("Exit code 0\n");
-                }
-                // Executable probably crashed, save input file. 
-                else {
-                    printf("Exit code:%d\n",status);
+                // Executable was killed by signal, save input file.
+                if(status != 0){
+                    printf("Killed with signal:%d\n",status);
                     char new_filename[128];
                     snprintf(new_filename,127,"filename:%s_offset:%d_value:0x%hhx",seedfile_name,pos,value);
                 
@@ -289,6 +290,13 @@ int main(int argc, char **argv){
                         return 1;
                     }
                 } 
+                // Executable was not killed by signal, remove input file.
+                else {
+                    int remove_status = remove(tmp_file);
+                    if(remove_status != 0) {
+                        printf("Error removing tmp file\n");
+                    }
+                }
                 value++;
             }
             // If we should only bit flipp a specific offset then only run loop one time.
