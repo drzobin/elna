@@ -14,6 +14,8 @@
 #include <time.h>
 #include <dirent.h>
 #include <signal.h>
+#include <dirent.h>
+#include <errno.h>
 
 /*
 Run a command, kill the process if it hasent exit after sleep time.
@@ -48,6 +50,26 @@ int run_cmd(char *cmd,char *argv[], int run_time)
                 return 0;
             }
         }
+    }
+}
+
+/*
+Check if path is dir.
+@return 1 if path is dir and excist else 0.
+*/
+int is_dir(char *str_dir){
+
+    DIR* dir = opendir(str_dir);
+    // Directory exists.
+    if (dir) {
+        closedir(dir);
+	return 1;
+    // Directory does not exist.
+    } else if (ENOENT == errno) {
+        return 0;
+    // opendir() failed for some other reason.
+    } else {
+        return 0;
     }
 }
 
@@ -95,13 +117,14 @@ int main(int argc, char **argv){
 
         c = getopt (argc, argv, "s:o:w:p:t:");
         if (c == -1) {
-            /* We have finished processing all the arguments. */
+            // We have finished processing all the arguments.
             break;
         }
         switch (c) {
         // Set seedfile folder, this is the folder that contins the seedfiles.
         case 's':
             printf ("Setting seedfiles folder to: %s\n", optarg);
+	    is_dir(&optarg[0]);
             seedfile_folder = &optarg[0];
             break;
         // Set output dir, this is where the crashes/results will be saved.
