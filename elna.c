@@ -66,6 +66,22 @@ int run_cmd(char *cmd,char *argv[], int run_time)
 }
 
 /*
+Check if we can create a file with a specific path.
+@return 1 if we can create the file else 0.
+*/
+int is_file_creatable(char *str_file){
+    FILE *ptr_file = NULL;
+    ptr_file = fopen(str_file, "w");
+
+    if (ptr_file == NULL) {
+        return 0;
+    }
+    fclose(ptr_file);
+
+    return 1;
+}
+
+/*
 Check if path is dir.
 @return 1 if path is dir and excist else 0.
 */
@@ -145,18 +161,24 @@ int main(int argc, char **argv){
             break;
         // Set output folder, this is where the crashes/results will be saved.
         case 'o':
-            printf ("Setting out/results folder to: %s\n", optarg);
+            printf ("Setting output/results folder to: %s\n", optarg);
 	    if(is_dir(&optarg[0]) == 1){
                 out_dir = &optarg[0];
 	    } else {
-		printf("Error: out/results folder is not a folder :(\n");
+		printf("Error: output/results folder is not a folder :(\n");
                 exit(1);
             }
             break;
         // Set working file, this is the bitflipped seedfile that will be written and removes many times.
         case 'w':
             printf ("Setting working file to: %s\n", optarg);
-            tmp_file = &optarg[0];
+	    if(is_file_creatable(&optarg[0]) == 1){
+                tmp_file = &optarg[0];
+		printf("tmp_file:%s\n",tmp_file);
+	    } else {
+	        printf("Error: working file can not be witten to :(\n");
+		exit(1);
+	    }
             break;
         // Set offset/possition in seedfile that should be flipped, if -1 all offsets/possistions will be flipped.
         case 'p':
@@ -170,11 +192,11 @@ int main(int argc, char **argv){
             break;
         case '?':
         default:
-            printf ("Usage: %s -s [seedfile folder] -o [output folder] -w [working file]\n\n",argv[0]);
+            printf ("Usage: %s -s [seedfile folder] -o [output/results folder] -w [working file]\n\n",argv[0]);
             printf ("Arguments: \n");
             printf ("-s Full path to folder with seedfiles\n");
             printf ("-o Full path to folder where output/crashes/results/stats should be saved\n");
-            printf("-w Full path to file where mutated seedfile should be saved\n");
+            printf("-w Full path to working file where mutated seedfile should be saved temporarily\n");
             printf("-p Offset/possistion in seedfile that should be flipped, if -1 all offsets/possistions will be flipped, this is default\n");
             printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself, this is default\n");
         }
@@ -195,7 +217,6 @@ int main(int argc, char **argv){
         count = count + 1;
     }
     cmd_argv[arg_left] = NULL;
-
     // Now set the values of "argc" and "argv" to the values after the options have been processed, above.
     argc -= optind;
     argv += optind;
