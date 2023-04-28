@@ -237,7 +237,7 @@ int main(int argc, char **argv){
     DIR *dir = opendir(seedfile_folder);
     if (dir == NULL){
         printf("Error: Directory seedfile folder that was set to %s can not be open. \n",seedfile_folder);
-        return 0;
+        exit(1);
     }
 
     // This loop is run on all the seedfiles, one iteration per file.
@@ -292,6 +292,10 @@ int main(int argc, char **argv){
                 if(value == '\xee'){
                     printf("Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
                     FILE *status_file_ptr = fopen(status_file, "a");
+		    if(status_file_ptr = NULL){
+		        printf("Error: cant open status file:%s",status_file);
+			exit(1);
+	            }
                     fprintf(status_file_ptr,"Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
                     fclose(status_file_ptr);
                 }
@@ -342,6 +346,7 @@ int main(int argc, char **argv){
         }
     }
     closedir(dir);
+    printf("No seedfiles left to process\n");
 
     return 0;
 }
