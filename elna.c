@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <dirent.h>
 #include <errno.h>
+#include <ctype.h>
 
 /*
 Run a command, kill the process if it hasent exit after sleep time.
@@ -125,13 +126,13 @@ void create_seedfile(char *originalFile,size_t size,int pos,char *value,char *ne
 
 int main(int argc, char **argv){
     // Full path to tmp working file. This is the bitflipped seedfile that will be written to an removed many times.
-    char *tmp_file;
+    char *tmp_file = NULL;
     
     // Full path to folder that contains seedfiles.
-    char *seedfile_folder;
+    char *seedfile_folder = NULL;
     
     // Full path where to save files that crash the program.
-    char *out_dir;
+    char *out_dir = NULL;
     
     // Byte offset/possition in input file to fuzz, if set to -1 then flipp all bits in input file.
     int pos = -1;
@@ -143,7 +144,7 @@ int main(int argc, char **argv){
     while (1) {
         char c;
 
-        c = getopt (argc, argv, "s:o:w:p:t:");
+        c = getopt (argc, argv, "s:o:w:p::t::");
         if (c == -1) {
             // We have finished processing all the arguments.
             break;
@@ -152,7 +153,7 @@ int main(int argc, char **argv){
         // Set seedfile folder, this is the folder that contins the seedfiles.
         case 's':
             printf ("Setting seedfiles folder to: %s\n", optarg);
-	    if (is_dir(&optarg[0]) == 1){
+	    if (is_dir(&optarg[0])){
                 seedfile_folder = &optarg[0];
 	    } else {
 		printf("Error: Seedfile folder is not a folder :(\n");
@@ -201,6 +202,24 @@ int main(int argc, char **argv){
             printf("-t Time to wait before killing fuzzed program, if -1 we will wait until fuzzedprogram exit itself, this is default\n");
         }
     }
+    // Is seedfile folder set.
+    if(seedfile_folder == NULL){
+        printf("Error: seedfile folder is not set :(\n");
+	exit(1);
+    }
+
+    // Is output/results folder set.
+    if(out_dir == NULL){
+        printf("Error: output/results folder is not set :(\n");
+	exit(1);
+    }
+
+    // Is working file set.
+    if(tmp_file == NULL){
+        printf("Error: working file is not set :(\n");
+	exit(1);
+    }
+
 
     // Number of argument left to parse + 1 for NULL.
     int arg_left = (argc - optind) + 1;
@@ -217,6 +236,7 @@ int main(int argc, char **argv){
         count = count + 1;
     }
     cmd_argv[arg_left] = NULL;
+
     // Now set the values of "argc" and "argv" to the values after the options have been processed, above.
     argc -= optind;
     argv += optind;
@@ -292,7 +312,7 @@ int main(int argc, char **argv){
                 if(value == '\xee'){
                     printf("Target:%s Seedfile:%s Offset:%i Value:0xEE\n",cmd_argv[0],seedfile_name,pos);
                     FILE *status_file_ptr = fopen(status_file, "a");
-		    if(status_file_ptr = NULL){
+		    if(status_file_ptr == NULL){
 		        printf("Error: cant open status file:%s",status_file);
 			exit(1);
 	            }
