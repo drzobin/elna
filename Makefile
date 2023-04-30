@@ -4,7 +4,7 @@
 # 2023-01-20
 
 CC=clang
-CFLAG=-g -Wall -ansi -pedantic
+CFLAG=-g3 -Wall -Wextra -ansi -pedantic -fsanitizer=address,undefined
 
 all: elna crash_me
 
