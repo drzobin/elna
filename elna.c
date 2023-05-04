@@ -144,7 +144,7 @@ int main(int argc, char **argv){
     while (1) {
         char c;
 
-        c = getopt (argc, argv, "s:o:w:p::t::");
+        c = getopt (argc, argv, "s:o:w:p:t:");
         if (c == -1) {
             // We have finished processing all the arguments.
             break;
@@ -220,7 +220,6 @@ int main(int argc, char **argv){
 	exit(1);
     }
 
-
     // Number of argument left to parse + 1 for NULL.
     int arg_left = (argc - optind) + 1;
     char *cmd_argv[arg_left];
@@ -286,6 +285,12 @@ int main(int argc, char **argv){
 
         // Read original seedfile data to heap.
         original_filedata = read_file(file,file_size);
+
+        // Check that pos is not out of range from file size.
+        if (pos >= file_size && pos != -1){
+            printf("Error: offset is out of range from seedfile size :(\n");
+            exit(1);
+        }
 
         if(flipp_all_bits == 1){
             pos = 0;
